@@ -21,18 +21,33 @@ Console.WriteLine("Weather for?:");
 var locationAddressDecode = Console.ReadLine();
 var locationAddressEncode = HttpUtility.UrlEncode(locationAddressDecode, encode);
 
-var geoCodingURL = $"https://api.opencagedata.com/geocode/v1/json?q={locationAddressEncode}&key={OCKey}";
-var geoCodingResponse = client.GetStringAsync(geoCodingURL).Result;
-var geoCodeResult = JObject.Parse(geoCodingResponse).SelectToken("results");
+try
+{
+    var geoCodingURL = $"https://api.opencagedata.com/geocode/v1/json?q={locationAddressEncode}&key={OCKey}";
+    var geoCodingResponse = client.GetStringAsync(geoCodingURL).Result;
+    var geoCodeResult = JObject.Parse(geoCodingResponse).SelectToken("results");
 
-var latitudeDMS = geoCodeResult[0]["annotations"]["DMS"]["lat"].ToString();
-var longitudeDMS = geoCodeResult[0]["annotations"]["DMS"]["lng"].ToString();
+    var latitudeDMS = geoCodeResult[0]["annotations"]["DMS"]["lat"].ToString();
+    var longitudeDMS = geoCodeResult[0]["annotations"]["DMS"]["lng"].ToString();
 
-var latDegrees = Utility.ConvertDegreeAngleToDouble(latitudeDMS);
-var lngDegrees = Utility.ConvertDegreeAngleToDouble(longitudeDMS);
+    var latDegrees = Utility.ConvertDegreeAngleToDouble(latitudeDMS);
+    var lngDegrees = Utility.ConvertDegreeAngleToDouble(longitudeDMS);
 
-var weatherURL = $"https://api.openweathermap.org/data/2.5/weather?lat={latDegrees}&lon={lngDegrees}&appid={weatherKey}&units=imperial";
-var weatherResponse = client.GetStringAsync(weatherURL).Result;
-var weatherResult = JObject.Parse(weatherResponse).SelectToken("main").SelectToken("temp").ToString();
+    var weatherURL = $"https://api.openweathermap.org/data/2.5/weather?lat={latDegrees}&lon={lngDegrees}&appid={weatherKey}&units=imperial";
+    var weatherResponse = client.GetStringAsync(weatherURL).Result;
+    var weatherResult = JObject.Parse(weatherResponse).SelectToken("main").SelectToken("temp").ToString();
 
-Console.WriteLine($"{weatherResult} degrees F");
+    Console.WriteLine($"{weatherResult} degrees F");
+}
+catch (ArgumentOutOfRangeException)
+{
+    Console.WriteLine("error: invalid search");
+}
+catch (HttpRequestException)
+{
+    Console.WriteLine("error: invalid request");
+}
+catch (Exception)
+{
+    Console.WriteLine("an unexpected error occured");
+}
