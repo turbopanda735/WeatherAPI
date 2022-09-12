@@ -50,9 +50,9 @@ try
 
     Console.WriteLine($"{city}, {country}");
     Console.WriteLine(forecast);
-    Console.WriteLine($"Right now: {currentTemp} degrees F");
-    Console.WriteLine($"Daily high: {maxTemp}");
-    Console.WriteLine($"Daily low: {minTemp}");
+    Console.WriteLine($"Right now: {currentTemp}\u00B0F");
+    Console.WriteLine($"Daily high: {maxTemp}\u00B0F");
+    Console.WriteLine($"Daily low: {minTemp}\u00B0F");
 }
 catch (ArgumentOutOfRangeException)
 {
